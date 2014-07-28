@@ -6,5 +6,7 @@ if($@) {
 }
 
 else {
-     Test::Pod::all_pod_files_ok();
+  warn "\nTest::Pod version: $Test::Pod::VERSION\n";
+  warn "\nPod::Simple version: $Pod::Simple::VERSION\n";
+  Test::Pod::all_pod_files_ok();
 }

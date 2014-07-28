@@ -5,12 +5,13 @@ require Exporter;
 *import = \&Exporter::import;
 require DynaLoader;
 
-$Math::Random::MicaliSchnorr::VERSION = '0.02';
+our $VERSION = '0.03';
+#$VERSION = eval $VERSION;
 
-DynaLoader::bootstrap Math::Random::MicaliSchnorr $Math::Random::MicaliSchnorr::VERSION;
+DynaLoader::bootstrap Math::Random::MicaliSchnorr $VERSION;
 
-@Math::Random::MicaliSchnorr::EXPORT_OK = qw(ms ms_seedgen monobit longrun runs poker);
-%Math::Random::MicaliSchnorr::EXPORT_TAGS =(all => [qw(ms ms_seedgen monobit longrun runs poker)]);
+@Math::Random::MicaliSchnorr::EXPORT_OK = qw(ms ms_seedgen monobit longrun runs poker autocorrelation autocorrelation_20000);
+%Math::Random::MicaliSchnorr::EXPORT_TAGS =(all => [qw(ms ms_seedgen monobit longrun runs poker autocorrelation autocorrelation_20000)]);
 
 sub dl_load_flags {0} # Prevent DynaLoader from complaining and croaking
 
@@ -21,7 +22,7 @@ __END__
 =head1 NAME
 
    Math::Random::MicaliSchnorr - the Micali-Schnorr pseudorandom bit generator.
-   
+
 =head1 DEPENDENCIES
 
    To build this module the GMP C library needs to be installed. Source for
@@ -74,7 +75,7 @@ __END__
     objects. $prime1 and $prime2 are large primes. (The ms function does
     not check that they are, in fact, prime. Both Math::GMPz and Math::GMP
     modules provide functions for creating large primes.)
-    Output a $bits-bit random bitstream to $o - calculated using the 
+    Output a $bits-bit random bitstream to $o - calculated using the
     Micali-Schnorr algorithm, based on the inputs $prime1, $prime2, $seed
     and $exp. See the ms_seedgen documentation (below) for the requirements
     regarding $seed and $exp.
@@ -88,7 +89,7 @@ __END__
     that $seed and $exp values it has been passed are in the allowed range.)
     Here are the rules for determining those values:
     Let N be the bitlength of n = $prime1 * $prime2.
-    Let phi = ($prime1 - 1) * ($prime2 - 1). $exp must satisfy all 3 of the 
+    Let phi = ($prime1 - 1) * ($prime2 - 1). $exp must satisfy all 3 of the
     following conditions:
      i) 2 < $exp < phi
      ii) The greatest common denominator of $exp and phi is 1
@@ -108,8 +109,8 @@ __END__
     upon the security of the MicaliSchnorr generator - save that the seed
     needs to be r (or less) bits in size, that no seed value should be
     re-used, and that $exp satisfies the 3 conditions given above.
-    Afaik, the security relies on the values of the 2 primes being secret
-    ... I could be wrong, but.
+    Afaik, the security relies solely on the values of the 2 primes being
+    secret ... I could be wrong, but.
 
    $bool = monobit($op);
    $bool = longrun($op);
@@ -121,6 +122,18 @@ __END__
     They test 20000-bit pseudorandom sequences, stored in the
     Math::GMPz/Math::GMP object $op.
 
+   $bool = autocorrelation_20000($op, $offset);
+    $op is a sequence (Math::GMPz/Math::GMP object) of 20000 + $offset bits.
+    Returns true ("success") if the no. of bits in $op not equal to their
+    $offset-leftshifts lies in the range [9655 .. 10345] (inclusive).
+    Else returns 0 ("failure").
+
+  ($count, $x5val) = autocorrelation($op, $offset);
+    $op is a sequence (Math::GMPz/Math::GMP object) of 20000 bits.
+    Returns (resp.) the no. of bits in $op not equal to their
+    $offset-leftshifts, and the X5 value as specified in section 5.4.4
+    of "Handbook of Applied Cryptography" (Menezes at al).
+
 =head1 BUGS
 
    You can get segfaults if you pass the wrong type of argument to the
@@ -129,7 +142,7 @@ __END__
 
 =head1 LICENSE
 
-   This program is free software; you may redistribute it and/or 
+   This program is free software; you may redistribute it and/or
    modify it under the same terms as Perl itself.
    Copyright 2006-2008, 2009, 2010, Sisyphus
 
@@ -137,5 +150,5 @@ __END__
 
    Sisyhpus <sisyphus at(@) cpan dot (.) org>
 
-   
+
 =cut

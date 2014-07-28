@@ -10,7 +10,7 @@ Build in the usual way:
  make test
  make install
 
-If the GMP library is not in a location where your compiler finds it by default, 
+If the GMP library is not in a location where your compiler finds it by default,
 then instead of running 'perl Makefile.PL', you'll need to run:
 
 perl Makefile.pl INC="-I/path/to/gmp_include" LIBS="-L/path/to/gmp_lib -lgmp"
